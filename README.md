@@ -1,4 +1,4 @@
-<img scr='https://www.magnific.com/premium-ai-image/technology-background-concept-abstract-technology-binary-code_129840798.htm' alt='border'>
+<img src="https://img.freepik.com/premium-photo/technology-background-concept-abstract-technology-binary-code_887552-39768.jpg" alt="border">
 # Hello, and welcome to my project dump!
 
 Not everything in here shows how good I am at coding, this is just for some random projects I made, this is not where you will find my best pieces of code, that goes elsewhere!
