@@ -1,6 +1,5 @@
-# I am not very experienced
-# but, I know some of the basics
-# what about a simple game that uses lots of object-oriented programming (OOP) concepts?
+# very very basic rogulike
+# the high-score is in file.txt, and the high-score holders name is in name.txt
 
 from random import randint as ri
 
