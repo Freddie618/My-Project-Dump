@@ -1,4 +1,4 @@
-<img src="https://img.freepik.com/premium-photo/technology-background-concept-abstract-technology-binary-code_887552-39768.jpg" alt="border">
+<img src="blob:https://gemini.google.com/d6c09336-324e-4ab0-a124-f3f8363a71ef" alt="border">
 # Hello, and welcome to my project dump!
 
 Not everything in here shows how good I am at coding, this is just for some random projects I made, this is not where you will find my best pieces of code, that goes elsewhere!
