@@ -1,4 +1,4 @@
-<img scr='https://tse3.mm.bing.net/th/id/OIP._dFOk4ePtWkfz9zugN_2EwHaEJ?r=0&w=626&h=351&rs=1&pid=ImgDetMain&o=7&rm=3' alt='border'>
+<img scr='https://www.magnific.com/premium-ai-image/technology-background-concept-abstract-technology-binary-code_129840798.htm' alt='border'>
 # Hello, and welcome to my project dump!
 
 Not everything in here shows how good I am at coding, this is just for some random projects I made, this is not where you will find my best pieces of code, that goes elsewhere!
