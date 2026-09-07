@@ -1,0 +1,420 @@
+"""
+
+
+
+
+
+
+Welcome to the Pong game!
+
+The controls for the left paddle are w to move up and s to move down
+The controls for the right paddle are o to move up and l to move down
+
+We keep a running counter, this means that you do not have to write down the score!
+
+Unfortunately, I have not coded in a system that allows you to play off against the computer
+Maybe in a year or never!
+
+
+
+
+
+
+
+
+
+
+
+
+"""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+from tkinter import Tk, Canvas
+import random as rand
+
+VELOCITY = 15
+MARGIN = 15
+
+
+class Ball:
+    def __init__(self, canvas, width, height,
+                 velocity, boardwidth, boardheight):
+
+        # Variables
+        self.width = width
+        self.height = height
+        self.boardheight = boardheight
+        self.boardwidth = boardwidth
+
+        # Defining more variables
+        self.topx = boardwidth / 2 - width / 2
+        self.topy = boardheight / 2 - height / 2
+        self.velocity = velocity * 0.55
+        self.vx = velocity * 0.55
+        self.vy = velocity * 0.55
+        self.canvas = canvas
+
+        # Now I can create a rectangle on my program
+        self.id = self.canvas.create_rectangle(
+            self.topx,
+            self.topy,
+            self.topx + self.width,
+            self.topy + self.height,
+            fill="white"
+        )
+
+    # I will now draw the ball
+    def draw_ball(self):
+        self.canvas.coords(
+            self.id,
+            self.topx,
+            self.topy,
+            self.topx + self.width,
+            self.topy + self.height
+        )
+
+    # This is so the ball can be reset back to the center when you loose a point
+    def reset_ball(self):
+        self.topx = self.boardwidth / 2 - self.width / 2
+        self.topy = self.boardheight / 2 - self.height / 2
+
+        # Ball goes in a random direction upon starting
+        self.vx = (-1, 1)[rand.random() > 0.5] * self.velocity
+        self.vy = (-1, 1)[rand.random() > 0.5] * self.velocity
+
+    def move_ball(self, pong, paddleright, paddleleft):
+
+        # When ball hits top or bottom border it bounces off
+        if self.topy <= 0:
+            self.topy = 0
+            self.vy = abs(self.vy)
+
+        elif self.topy + self.height >= self.boardheight:
+            self.topy = self.boardheight - self.height
+            self.vy = -abs(self.vy)
+
+        # When ball hits the right paddle it bounces off
+        if self.vx > 0 and paddleright.collide_right(self):
+            self.topx = paddleright.topx - self.width
+            self.vx = -abs(self.vx)
+
+        # When ball hits the left paddle it bounces off
+        elif self.vx < 0 and paddleleft.collide_left(self):
+            self.topx = paddleleft.topx + paddleleft.width
+            self.vx = abs(self.vx)
+
+        # When ball hits the right side of the board, left player scores
+        if self.topx + self.width >= self.boardwidth:
+            pong.leftpoints = pong.leftpoints + 1
+            return True
+
+        # When ball hits the left side of the board, right player scores
+        if self.topx <= 0:
+            pong.rightpoints = pong.rightpoints + 1
+            return True
+
+        # Now I will update the ball position
+        self.topx = self.topx + self.vx
+        self.topy = self.topy + self.vy
+
+        return False
+
+
+class Paddle:
+    def __init__(self, canvas, width, height, topx, topy, boardheight):
+        self.topx = topx
+        self.topy = topy
+        self.width = width
+        self.height = height
+        self.canvas = canvas
+        self.boardheight = boardheight
+        self.score = 0
+
+        # Draws paddle following positions in parameters
+        self.id = self.canvas.create_rectangle(
+            self.topx,
+            self.topy,
+            self.topx + self.width,
+            self.topy + self.height,
+            fill="white"
+        )
+
+    # This updates the coordinates of the paddle
+    def draw_paddle(self):
+        self.canvas.coords(
+            self.id,
+            self.topx,
+            self.topy,
+            self.topx + self.width,
+            self.topy + self.height
+        )
+
+    # The next two do the up and down events for the paddle
+    def top_paddle(self):
+        if self.topy - VELOCITY >= 0:
+            self.topy = self.topy - VELOCITY
+
+    def down_paddle(self):
+        if self.topy + self.height + VELOCITY <= self.boardheight:
+            self.topy = self.topy + VELOCITY
+
+    # Uses both methods to collide with the paddles on the left and the right
+    def collide_right(self, ball):
+        return (
+            ball.topx + ball.width >= self.topx
+            and ball.topx <= self.topx + self.width
+            and ball.topy + ball.height >= self.topy
+            and ball.topy <= self.topy + self.height
+        )
+
+    def collide_left(self, ball):
+        return (
+            ball.topx <= self.topx + self.width
+            and ball.topx + ball.width >= self.topx
+            and ball.topy + ball.height >= self.topy
+            and ball.topy <= self.topy + self.height
+        )
+
+
+class Pong:
+    def __init__(self, root, width, height, margin):
+        paddlewidth = width / 50
+        paddleheight = height / 12
+        self.leftpoints = 0
+        self.rightpoints = 0
+        self.lefttxt = None
+        self.righttxt = None
+
+        # True when we need to render game on canvas
+        self.render = True
+
+        # These are to manage paddle movements
+        self.leftup = False
+        self.leftdown = False
+        self.rightup = False
+        self.rightdown = False
+
+        self.width = width
+        self.height = height
+        self.margin = margin
+        self.root = root
+
+        # Making the title and the geometry of my Pong game
+        self.root.title("PONG FINAL PROJECT - FINALLY")
+        self.root.geometry(str(self.width) + "x" + str(self.height))
+
+        # Creating the canvas
+        self.canvas = Canvas(
+            self.root,
+            width=width,
+            height=height,
+            background="Black"
+        )
+
+        self.paddleleft = Paddle(
+            self.canvas,
+            paddlewidth,
+            paddleheight,
+            margin,
+            height / 2 - paddleheight / 2,
+            height
+        )
+
+        self.paddleright = Paddle(
+            self.canvas,
+            paddlewidth,
+            paddleheight,
+            (width - margin) - paddlewidth,
+            height / 2 - paddleheight / 2,
+            height
+        )
+
+        self.ball = Ball(
+            self.canvas,
+            paddlewidth,
+            paddlewidth,
+            VELOCITY,
+            width,
+            height
+        )
+
+        self.canvas.pack()
+        self.draw_middle_line()
+        self.drawboard()
+        self.move()
+
+    # This function is for the middle line
+    def draw_middle_line(self):
+        leftx = self.width / 2 - self.paddleleft.width / 2
+
+        for i in range(
+            0,
+            self.height,
+            int(self.paddleleft.height + self.margin * 2)
+        ):
+            self.canvas.create_rectangle(
+                leftx,
+                i,
+                leftx + self.paddleleft.width,
+                i + self.paddleleft.height,
+                fill="grey"
+            )
+
+    # This function just draws everything
+    def drawboard(self):
+        self.paddleleft.draw_paddle()
+        self.paddleright.draw_paddle()
+        self.drawpoints()
+        self.ball.draw_ball()
+
+    def drawpoints(self):
+
+        # This will delete the previous score from the canvas
+        if self.lefttxt is not None:
+            self.canvas.delete(self.lefttxt)
+
+        # This writes the new score
+        self.lefttxt = self.canvas.create_text(
+            self.width / 2 - 50,
+            50,
+            text=str(self.leftpoints),
+            fill="grey",
+            font=("Helvetica", 35, "bold")
+        )
+
+        # Now I will repeat it for the right paddle
+        if self.righttxt is not None:
+            self.canvas.delete(self.righttxt)
+
+        # Now for the new score
+        self.righttxt = self.canvas.create_text(
+            self.width / 2 + 50,
+            50,
+            text=str(self.rightpoints),
+            fill="grey",
+            font=("Helvetica", 35, "bold")
+        )
+
+    # I will now make the move function update the game
+    def move(self):
+        if self.render:
+
+            # Time for touch events
+            if self.leftup:
+                self.paddleleft.top_paddle()
+
+            if self.leftdown:
+                self.paddleleft.down_paddle()
+
+            if self.rightup:
+                self.paddleright.top_paddle()
+
+            if self.rightdown:
+                self.paddleright.down_paddle()
+
+            # This is True if the ball touched one of the two sides of the board
+            state = self.ball.move_ball(
+                self,
+                self.paddleright,
+                self.paddleleft
+            )
+
+            # This is so I can restart the ball
+            if state:
+                self.restart()
+
+            self.drawboard()
+
+            # Now I can use the tkinter timer, a much better option than threading
+            self.timer = self.root.after(9, self.move)
+
+    def restart(self):
+        self.ball.reset_ball()
+
+    # I now need to do keyboard events from the user
+    def key_press(self, event):
+
+        # Without match, the case function does not work
+        match event.char:
+            case "w":
+                self.leftup = True
+            case "s":
+                self.leftdown = True
+            case "o":
+                self.rightup = True
+            case "l":
+                self.rightdown = True
+
+    # Now I have to repeat it for on key release
+    def key_release(self, event):
+
+        # I also have to switch the True output to False
+        match event.char:
+            case "w":
+                self.leftup = False
+            case "s":
+                self.leftdown = False
+            case "o":
+                self.rightup = False
+            case "l":
+                self.rightdown = False
+
+    # Finally, I have to be able to kill off the game
+    def killtimer(self):
+        self.render = False
+
+        if hasattr(self, "timer"):
+            self.root.after_cancel(self.timer)
+
+        self.root.destroy()
+
+
+# AVENGERS ASSEMBLE!!!!!
+
+root = Tk()
+root.attributes("-fullscreen", True)
+WIDTH = root.winfo_screenwidth()
+HEIGHT = root.winfo_screenheight()
+pong = Pong(root, WIDTH, HEIGHT, MARGIN)
+root.bind("<KeyPress>", pong.key_press)
+root.bind("<KeyRelease>", pong.key_release)
+root.wm_protocol("WM_DELETE_WINDOW", pong.killtimer)
+root.mainloop()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
