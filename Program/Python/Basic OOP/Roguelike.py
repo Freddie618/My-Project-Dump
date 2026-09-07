@@ -118,13 +118,13 @@ while True:
     else:
         print("Please enter a valid name (only letters)")
 
-
+'''
 with open("file.txt", "r") as file:
     with open("name.txt", "r") as file_2:
         high_score = int(file.read())
         high_score_name = file_2.read()
         print(f"{high_score_name} got the high score of {high_score}")
-
+'''
 game = Game(400, 0, name)
 
 player = Player(400, 
@@ -170,12 +170,14 @@ while loop_1 == True:
         DMG_CAP = DMG_CAP + 50
         level = level + 1
         print(f"You are now level {level}!")
+        '''
         if level > high_score:
             with open("file.txt", "w") as file:
                 with open("name.txt", "w") as file_2:
                     file.write(str(level))
                     file_2.write(name)
                     print(f"You beat {high_score_name} with a score of {level}")
+                    '''
         ran_name = names[ri(0,9)]
             
     else:
