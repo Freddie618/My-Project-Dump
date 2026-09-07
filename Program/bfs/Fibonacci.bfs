@@ -1,0 +1,52 @@
+﻿
+
+# The Fibinnacci Sequence
+
+
+[
+	# This sets the pointer to cell 0
+	<
+]
+# Sets cell 0 to the value of 1 so that the loop works
++
+[
+	[
+		# This sets up the beggining of the sequence
+		.>+.>+<><
+		[
+			[
+				# Moves cell 1 to cell 2
+				->+<>-<>+<
+			]
+			# Moves pointer to cell 2
+			>
+			[
+				# Dupes cell 2 in cell 3 and cell 4
+				->+>+<<->+-<+
+			]
+			# Puts pointer on cell 4
+			>>+<>-
+			[
+				# Puts cell 4 in cell 1
+				-<<<+>>>
+			]
+			# Puts pointer on cell 1
+			<+-<<
+			[
+				# Adds cell 1 on to cell 0
+				-<+>
+			]
+			# Puts pointer on cell 3
+			<>><>>
+			[
+				# Dupes cell 3 to cells 1 and 2
+				-<+<+>>
+			]
+			# Puts pointer on cell 1
+			<<>-><+><<
+		]
+	# Adds one to the the next cell so that the proccess will repeat in the next byte
+	+­­
+	]
+]
+
